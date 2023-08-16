@@ -11,8 +11,17 @@ mongoose.connect("mongodb+srv://test31:u3aG3TiQyUhTTF5L@cluster0.bnaox.mongodb.n
     console.error("Erreur lors de la connexion à MongoDB :", err);
   });
 
-  var hosts = ["83.150.217.148"];
+app.get("/", async (req, res) => {
+  let data = await db.findOne({HostName: "VPS"});
+  if(!data) return res.json([]);
+  if(data) return res.json({Host: data.Host, HostName: data.HostName, Uptime: data.uptime, Latency: res.Latency, isOnline: data.isOnline});
+});
+
+app.listen(process.env.PORT || 3000, () => {
+  console.log(`Ready ! http://localhost:${process.env.PORT || 3000}/`);
+        var hosts = ["83.150.217.148"];
   setInterval(async () => {
+        console.log("test");
     for (let host of hosts) {
       let res = await ping.promise.probe(host);
       let data = await db.findOne({Host: res.host});
@@ -205,13 +214,5 @@ mongoose.connect("mongodb+srv://test31:u3aG3TiQyUhTTF5L@cluster0.bnaox.mongodb.n
       OfflineStatus();
     }
   }, 60000);
-
-app.get("/", async (req, res) => {
-  let data = await db.findOne({HostName: "VPS"});
-  if(!data) return res.json([]);
-  if(data) return res.json({Host: data.Host, HostName: data.HostName, Uptime: data.uptime, Latency: res.Latency, isOnline: data.isOnline});
-});
-
-app.listen(process.env.PORT || 3000, () => {
-  console.log(`Ready ! http://localhost:${process.env.PORT || 3000}/`);
+console.log("test");
 });
